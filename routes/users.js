@@ -1,12 +1,12 @@
 const express = require('express');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs'); // Cambia bcrypt a bcryptjs
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const router = express.Router();
 
 router.post('/register', async (req, res) => {
   const { username, email, password, role } = req.body;
-  const hashedPassword = await bcrypt.hash(password, 10);
+  const hashedPassword = await bcrypt.hash(password, 10); // Cambia bcrypt.hashSync a bcrypt.hash
   const user = new User({ username, email, passwordHash: hashedPassword, role });
   try {
     await user.save();
@@ -19,7 +19,7 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
-  if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
+  if (!user || !(await bcrypt.compare(password, user.passwordHash))) { // Cambia bcrypt.compareSync a bcrypt.compare
     return res.status(400).json({ error: 'Invalid email or password' });
   }
   const token = jwt.sign({ userId: user._id, username: user.username }, process.env.JWT_SECRET, { expiresIn: '1d' });
