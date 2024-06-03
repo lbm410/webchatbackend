@@ -6,6 +6,10 @@ const router = express.Router();
 // Enviar un mensaje
 router.post('/send', async (req, res) => {
   const { chatId, senderId, content, type, mediaUrl } = req.body;
+  if (!chatId || !senderId || !content) {
+    return res.status(400).json({ error: 'chatId, senderId, and content are required' });
+  }
+  
   try {
     const message = new Message({ chatId, senderId, content, type, mediaUrl });
     await message.save();
