@@ -3,12 +3,12 @@ const Chat = require('../models/Chat');
 const User = require('../models/User');
 const router = express.Router();
 
-// Crear un nuevo chat
+// Crear un nuevo chat (individual o grupal)
 router.post('/create', async (req, res) => {
-  const { participants } = req.body;
+  const { participants, name } = req.body;
   try {
     const users = await User.find({ username: { $in: participants } });
-    const chat = new Chat({ participants: users.map(user => user._id) });
+    const chat = new Chat({ participants: users.map(user => user._id), name });
     await chat.save();
     res.status(201).json(chat);
   } catch (error) {
